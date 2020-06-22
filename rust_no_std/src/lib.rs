@@ -3,6 +3,52 @@
 use core::panic::PanicInfo;
 use core::ptr;
 
+// array with pointers to exception handlers
+pub union Vector {
+    reserved: u32,
+    handler: unsafe extern "C" fn(),
+}
+
+// exception handlers
+extern "C" {
+    fn NMI(); // non-maskable interrupt
+    fn HardFault();
+    fn MemFault();
+    fn BusFault();
+    fn UsageFault();
+    fn SVCall();
+    fn PendSV();
+    fn SysTick();
+}
+
+#[link_section = ".vector_table.exceptions"]
+#[no_mangle]
+pub static EXCEPTIONS: [Vector; 14] = [
+    Vector { handler: NMI },
+    Vector { handler: HardFault },
+    Vector { handler: MemFault },
+    Vector { handler: BusFault },
+    Vector { handler: UsageFault },
+    Vector { reserved: 0 },
+    Vector { reserved: 0 },
+    Vector { reserved: 0 },
+    Vector { reserved: 0 },
+    Vector { handler: SVCall },
+    Vector { reserved: 0 },
+    Vector { reserved: 0 },
+    Vector { handler: PendSV },
+    Vector { handler: SysTick },
+];
+// handlers are extern, so user can define them
+// we use union because some entries in VT must be left NULL, 
+// according to ARM documentation, so we leave them as reserved with 0
+
+#[no_mangle]
+pub extern "C" fn DefaultExceptionHandler() {
+    loop {}
+}
+// default handler for handlers non-defined by user
+
 /* in order to link reset_handler and it's pointer reset vector we need their symbols to have external linkage
 we can do it with "pub" (aka global) word. also no private modules in-between krate and symbols
 reset handler is a func that is executed first after sys reset or first power up

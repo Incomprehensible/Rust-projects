@@ -9,6 +9,7 @@ ENTRY(Reset);
 
 /* don't let linker discard reset vector */
 EXTERN(RESET_VECTOR);
+EXTERN(EXCEPTIONS);
 
 SECTIONS
 {
@@ -19,6 +20,9 @@ SECTIONS
 
 		/* second entry: reset vector */
 		KEEP(*(.vector_table.reset_vector));
+
+		/* next 14 entries as exception vectors */
+		KEEP(*(.vector_table.exceptions));
 	} > FLASH
 
 	.text :
@@ -66,3 +70,16 @@ SECTIONS
 /* but its load address must be in non-volatile mem (in FLASH) */
 /* cause the initial values of those static vars, however, must be allocated there */
 /* the LMA is where in Flash those initial values are stored. */
+
+/* giving undefined exception handlers in vector table default value/handler */
+/* PROVIDE only takes effect if mentioned symbols are still undefined */
+/* after inspecting all input object files */
+
+PROVIDE(NMI = DefaultExceptionHandler);
+PROVIDE(HardFault = DefaultExceptionHandler);
+PROVIDE(MemFault = DefaultExceptionHandler);
+PROVIDE(BusFault = DefaultExceptionHandler);
+PROVIDE(UsageFault = DefaultExceptionHandler);
+PROVIDE(SVCall = DefaultExceptionHandler);
+PROVIDE(PendSV = DefaultExceptionHandler);
+PROVIDE(SysTick = DefaultExceptionHandler);
