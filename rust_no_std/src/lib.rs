@@ -12,7 +12,8 @@ pub union Vector {
 // exception handlers
 extern "C" {
     fn NMI(); // non-maskable interrupt
-    fn HardFault();
+    fn HFTrampoline();
+    //fn HardFault();
     fn MemFault();
     fn BusFault();
     fn UsageFault();
@@ -25,7 +26,8 @@ extern "C" {
 #[no_mangle]
 pub static EXCEPTIONS: [Vector; 14] = [
     Vector { handler: NMI },
-    Vector { handler: HardFault },
+    Vector { handler: HFTrampoline },
+    //Vector { handler: HardFault },
     Vector { handler: MemFault },
     Vector { handler: BusFault },
     Vector { handler: UsageFault },
