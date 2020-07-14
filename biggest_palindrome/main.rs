@@ -1,19 +1,23 @@
 use std::env;
 
+// not efficient algos
+
 //checks fixed size potential palindrom
 fn yes_palindrom(s: &str, len: usize) -> Option<usize> {
-	println!("len of substr: {}", len);
+	//println!("len of substr: {}", len);
 	if len == 1 {
 		return Some(1);
 	}
 	for i in 0..len {
-		if i == len-1-i || i+1 == len-1-i {
+		if i == len-1-i || i > len-1-i {
 			break;
 		}
-		println!("s.chars().nth(i) = {}", s.chars().nth(i).unwrap());
-		println!("s.chars().nth(len-i) = {}", s.chars().nth(len-1-i).unwrap());
+		// println!("{}", s);
+		// println!("len-1-i: {}", len-1-i);
+		// println!("s.chars().nth(i) = {}, i: {}", s.chars().nth(i).unwrap(), i);
+		// println!("s.chars().nth(len-1-i) = {}, len-1-i: {}", s.chars().nth(len-1-i).unwrap(), len-1-i);
 		if s.chars().nth(i).unwrap() == s.chars().nth(len-1-i).unwrap() {
-			println!("s.chars().nth({}) and s.chars().nth({}) are equ", i, len-1-i);
+			//println!("s.chars().nth({}) and s.chars().nth({}) are equ", i, len-1-i);
 			// if i == len-i || i+1 == len-i {
 			// 	break;
 			// }
@@ -27,29 +31,24 @@ fn yes_palindrom(s: &str, len: usize) -> Option<usize> {
 
 fn search_print(s: &str) {
 	let n = s.len();
-	println!("len of str: {}", n);
-	let mut min = 0;
-	let mut max = 0;
-	let mut len: usize = 0;
+	let mut max: usize = 0;
+	//println!("len of str: {}", n);
 
 	for i in 0..n {
-		println!("i is s[{}]", i);
+		//println!("i is s[{}]", i);
 		for j in (i..n).rev() {
-			println!("j is s[{}]", j);
+			//println!("j is s[{}]", j);
 			if s.chars().nth(i) == s.chars().nth(j) {
-				println!("both s[{}] and s[{}] are equ", i, j);
-				if let Some(tmp) = yes_palindrom(&s[i..j], j-i) {
-					println!("tmp: {}", tmp);
-					if tmp > len {
-						min = i;
-						max = j;
-						len = tmp;
+				//println!("both s[{}] and s[{}] are equ", i, j);
+				if let Some(len) = yes_palindrom(&s[i..j+1], j+1-i) {
+					if len > max {
+						max = len;
 					}
 				}
 			}
 		}
 	}
-	println!("len: {}, start: {}, end: {}", len, min, max);
+	println!("{}", max);
 }
 
 fn for_any_string(arr: Vec<String>) {
