@@ -8,20 +8,32 @@ use tree::{
 
 
 fn main() {
-	let a = TreeNode::new(4, None, None);
-	let b = TreeNode::new(5, None, None);
-	let c = TreeNode::new(2, Some(Box::from(a)), Some(Box::from(b)));
-	let d = TreeNode::new(3, None, None);
-	let e_root = TreeNode::new(1, Some(Box::from(c)), Some(Box::from(d)));
-	let rusty_tree = Tree::new(Some(e_root));
+	let mut rusty_tree = Tree::new();
+	let a = rusty_tree.add_node(TreeNode::new(4, None, None));
+	let b = rusty_tree.add_node(TreeNode::new(5, None, None));
+	let c = rusty_tree.add_node(TreeNode::new(2, Some(a), Some(b)));
+	let d = rusty_tree.add_node(TreeNode::new(3, None, None));
+	let e_root = rusty_tree.add_node(TreeNode::new(1, Some(c), Some(d)));
 
-	for _node in rusty_tree.iter() {
-		//_node.value *= 100;
+	rusty_tree.set_root(Some(e_root));
+
+	let mut preorder = rusty_tree.iter();
+
+	while let Some(node_index) = preorder.next(&rusty_tree) {
+		if let Some(node) = rusty_tree.mut_node_at(node_index) {
+			(*node).value *= 10;
+		}
 	}
 
-	let mut iterator = rusty_tree.iter();
-	while let Some(node) = iterator.next() {
-		println!("{}", node.value);
+	let mut preorder_imm = rusty_tree.iter();
+
+	while let Some(node_index) = preorder_imm.next(&rusty_tree) {
+		//let node = rusty_tree.get_node_at(node_index).expect("no node at that index");
+		if let Some(node) = rusty_tree.get_node_at(node_index) {
+			println!("{}", node.value);
+		}
 	}
-    
+
+
+
 }

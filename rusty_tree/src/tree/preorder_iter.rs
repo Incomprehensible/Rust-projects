@@ -1,14 +1,15 @@
-use super::tree_node::TreeNode;
+use super::tree_node::TreeIndex;
+use super::the_tree::Tree;
 
-pub struct PreorderIter<'a> {
-	stack: Vec<&'a TreeNode>,
+pub struct PreorderIter {
+	stack: Vec<TreeIndex>,
 }
 
-impl<'a> PreorderIter<'a> {
-	pub fn new(root: Option<&'a TreeNode>) -> Self {
-		if let Some(node) = root {
+impl PreorderIter {
+	pub fn new(root: Option<TreeIndex>) -> Self {
+		if let Some(index) = root {
 			PreorderIter {
-				stack: vec![node]
+				stack: vec![index]
 			}
 		}
 		else {
@@ -17,24 +18,20 @@ impl<'a> PreorderIter<'a> {
 			}
 		}
 	}
-}
 
-impl<'a> Iterator for PreorderIter<'a> {
-	type Item = &'a TreeNode;
+	pub fn next(&mut self, tree: &Tree) -> Option<TreeIndex> {
+		while let Some(index) = self.stack.pop() {
+			if let Some(node) = tree.get_node_at(index) {
+				if let Some(right) = node.right {
+					self.stack.push(right);
+				}
+				if let Some(left) = node.left {
+					self.stack.push(left)
+				}
 
-	fn next(&mut self) -> Option<Self::Item> {
-		if let Some(node) = self.stack.pop() {
-			if let Some(right) = &node.right {
-				self.stack.push(right)
+				return Some(index);
 			}
-
-			if let Some(left) = &node.left {
-				self.stack.push(left)
-			}
-
-			return Some(node);
 		}
 		None
 	}
-
 }

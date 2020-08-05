@@ -1,11 +1,13 @@
+pub type TreeIndex = usize;
+
 pub struct TreeNode {
 	pub value: usize,
-	pub left: Option<Box<TreeNode>>,
-	pub right: Option<Box<TreeNode>>,
+	pub left: Option<TreeIndex>,
+	pub right: Option<TreeIndex>,
 }
 
 impl TreeNode {
-	pub fn new(value: usize, left: Option<Box<TreeNode>>, right: Option<Box<TreeNode>>) -> Self {
+	pub fn new(value: usize, left: Option<TreeIndex>, right: Option<TreeIndex>) -> Self {
 		TreeNode {
 			value,
 			left,
